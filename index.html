@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CONCURSUS">
+<meta name="theme-color" content="#0A0A08">
+<title>CONCURSUS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A08;
+    --bg2: #131310;
+    --bg3: #1C1C18;
+    --gold: #C9A84C;
+    --gold-dim: #8A6E2F;
+    --rust: #B5422A;
+    --rust-dim: #6B2818;
+    --teal: #3D8B7A;
+    --purple: #6B4E8A;
+    --green: #4A7A55;
+    --white: #F0EDE8;
+    --muted: #6B6B67;
+    --border: #2A2A26;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 24px);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 52px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .label-small {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .app-title {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--white);
+    line-height: 1;
+  }
+  .app-subtitle {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+  .date-badge {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-top: 8px;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content { padding: 0 20px; }
+
+  /* ── ROLL ZONE ── */
+  .roll-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 36px 24px 28px;
+    gap: 24px;
+  }
+
+  .die-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+  }
+
+  .die-svg {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.1s ease;
+    filter: drop-shadow(0 0 20px rgba(201,168,76,0.25));
+  }
+
+  .die-container.rolling .die-svg {
+    animation: dieRoll 0.6s ease-out;
+  }
+
+  @keyframes dieRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    20% { transform: rotate(-15deg) scale(1.1); }
+    40% { transform: rotate(20deg) scale(0.95); }
+    60% { transform: rotate(-10deg) scale(1.08); }
+    80% { transform: rotate(8deg) scale(0.97); }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+
+  .die-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold);
+    pointer-events: none;
+    text-shadow: 0 0 30px rgba(201,168,76,0.6);
+  }
+
+  .die-number.hidden { color: transparent; }
+
+  .roll-instruction {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .roll-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .manual-input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 16px;
+    color: var(--white);
+    text-align: center;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .manual-input::placeholder { color: var(--muted); font-size: 12px; letter-spacing: 0.05em; }
+  .manual-input:focus { border-color: var(--gold-dim); }
+
+  .btn-roll {
+    background: var(--gold);
+    color: #0A0A08;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn-roll:active { transform: scale(0.97); background: #A88A38; }
+
+  .btn-digital {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .btn-digital:active { border-color: var(--gold-dim); color: var(--gold); }
+
+  /* ── RESULT SECTION ── */
+  .result-section {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding-bottom: 32px;
+  }
+  .result-section.visible { display: flex; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 16px;
+  }
+
+  .roll-result-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .carpe-badge {
+    background: var(--gold);
+    color: #0A0A08;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    padding: 4px 12px;
+    border-radius: 100px;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    text-transform: uppercase;
+  }
+  .carpe-badge.earned { opacity: 1; }
+
+  /* ── DOMAIN CARDS ── */
+  .domain-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+  .domain-card.done { border-color: var(--gold-dim); }
+
+  .domain-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px 12px;
+  }
+
+  .domain-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .domain-label.intake { color: var(--teal); }
+  .domain-label.synthesis { color: var(--purple); }
+  .domain-label.exercise { color: var(--rust); }
+  .domain-label.ot { color: var(--gold); }
+
+  .domain-name {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+
+  .check-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .check-btn svg { opacity: 0; transition: opacity 0.2s; }
+  .check-btn.checked {
+    background: var(--gold);
+    border-color: var(--gold);
+  }
+  .check-btn.checked svg { opacity: 1; }
+
+  .domain-detail {
+    padding: 0 18px 16px;
+    border-top: 1px solid var(--border);
+    margin-top: 0;
+  }
+  .domain-detail-text {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+  .domain-detail-text strong {
+    color: var(--white);
+    font-weight: 400;
+  }
+
+  .protocol-tag {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  .protocol-tag.hz2 { background: rgba(61,139,122,0.15); color: var(--teal); border: 1px solid rgba(61,139,122,0.3); }
+  .protocol-tag.certamen { background: rgba(181,66,42,0.15); color: var(--rust); border: 1px solid rgba(181,66,42,0.3); }
+  .protocol-tag.sugar { background: rgba(61,139,122,0.12); color: var(--teal); border: 1px solid rgba(61,139,122,0.25); }
+  .protocol-tag.fried { background: rgba(107,78,138,0.15); color: var(--purple); border: 1px solid rgba(107,78,138,0.3); }
+  .protocol-tag.if { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
+
+  /* ── NON-NEGOTIABLES ── */
+  .nonneg-section {
+    margin-bottom: 40px;
+  }
+
+  .nonneg-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: border-color 0.2s;
+    width: 100%;
+    text-align: left;
+  }
+
+  .nonneg-toggle-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+  .nonneg-toggle-title {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--white);
+    margin-top: 2px;
+  }
+  .nonneg-chevron {
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .nonneg-section.open .nonneg-chevron { transform: rotate(180deg); }
+
+  .nonneg-list {
+    display: none;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    overflow: hidden;
+    margin-top: -4px;
+  }
+  .nonneg-section.open .nonneg-list { display: block; }
+
+  .nonneg-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nonneg-item:last-child { border-bottom: none; }
+
+  .nonneg-icon {
+    font-size: 14px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .nonneg-text {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .nonneg-text strong { color: var(--white); font-weight: 500; }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0 20px;
+  }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding: 0 4px;
+  }
+
+  /* ── REROLL ── */
+  .reroll-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.15s;
+    margin-top: 4px;
+    margin-bottom: 20px;
+  }
+  .reroll-btn:active { border-color: var(--rust-dim); color: var(--rust); }
+
+  /* ── OT TRIAD COLORS ── */
+  .triad-covenant { color: #D4A057; }
+  .triad-kingdom { color: #6BBF8A; }
+  .triad-endurance { color: #C4A83A; }
+  .triad-prophetic { color: #D4688A; }
+  .triad-promised { color: #8A7AD4; }
+  .triad-wisdom { color: #D47060; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-row {
+    display: flex;
+    gap: 6px;
+    padding: 0 4px;
+    margin-bottom: 20px;
+  }
+  .progress-pip {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+  .progress-pip.done { background: var(--gold); }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── FADE IN ── */
+  .fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Staggered */
+  .domain-card:nth-child(1) { animation-delay: 0.05s; }
+  .domain-card:nth-child(2) { animation-delay: 0.1s; }
+  .domain-card:nth-child(3) { animation-delay: 0.15s; }
+  .domain-card:nth-child(4) { animation-delay: 0.2s; }
+
+  /* ── CONFIRM OVERLAY ── */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .overlay.visible { display: flex; }
+  .overlay-sheet {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 480px;
+    padding-bottom: calc(28px + env(safe-area-inset-bottom, 16px));
+  }
+  .overlay-title {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .overlay-text {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .overlay-text span { color: var(--rust); }
+  .overlay-actions { display: flex; gap: 12px; }
+  .btn-confirm { flex: 1; padding: 14px; border: none; border-radius: 8px; background: var(--rust); color: #fff; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; }
+  .btn-cancel { flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.1em; cursor: pointer; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="label-small">Formation Protocol · 18-Month Recomp</div>
+  <div class="app-title">CONCURSUS</div>
+  <div class="app-subtitle">d20 Daily Randomizer · Carpe Points</div>
+  <div class="date-badge" id="dateBadge"></div>
+</div>
+
+<!-- ROLL ZONE -->
+<div class="roll-zone">
+  <div class="die-container" id="dieContainer" onclick="digitalRoll()">
+    <svg class="die-svg" id="dieSvg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- d20 shape -->
+      <polygon points="60,8 112,38 112,82 60,112 8,82 8,38" fill="#1C1C18" stroke="#C9A84C" stroke-width="1.5"/>
+      <polygon points="60,8 84,44 36,44" fill="#131310" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="112,38 84,44 60,8" fill="#1A1A14" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="8,38 36,44 60,8" fill="#181810" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="112,38 84,44 112,82" fill="#161612" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="8,38 36,44 8,82" fill="#14140E" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="60,112 84,76 36,76" fill="#131310" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="112,82 84,76 60,112" fill="#1A1A14" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="8,82 36,76 60,112" fill="#181810" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="84,44 112,38 84,76" fill="#171714" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="36,44 8,38 36,76" fill="#151510" stroke="#8A6E2F" stroke-width="0.8"/>
+      <polygon points="84,44 36,44 84,76 36,76" fill="#131310" stroke="#8A6E2F" stroke-width="0.8"/>
+    </svg>
+    <div class="die-number hidden" id="dieNumber">—</div>
+  </div>
+
+  <div class="roll-instruction" id="rollInstruction">TAP DIE TO ROLL DIGITALLY · OR ENTER YOUR PHYSICAL ROLL</div>
+
+  <div class="roll-controls">
+    <input type="number" class="manual-input" id="manualInput" placeholder="enter 1–20" min="1" max="20">
+    <button class="btn-roll" onclick="confirmManualRoll()">SET ROLL</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- RESULT SECTION -->
+  <div class="result-section" id="resultSection">
+
+    <div class="result-header">
+      <div>
+        <div class="roll-result-label">ROLL <span id="rollDisplay">—</span> · TODAY'S MANDATE</div>
+      </div>
+      <div class="carpe-badge" id="carpeBadge">⚡ CARPE POINT</div>
+    </div>
+
+    <!-- Progress pips -->
+    <div class="progress-row">
+      <div class="progress-pip" id="pip0"></div>
+      <div class="progress-pip" id="pip1"></div>
+      <div class="progress-pip" id="pip2"></div>
+      <div class="progress-pip" id="pip3"></div>
+    </div>
+
+    <!-- INTAKE -->
+    <div class="domain-card fade-in" id="card-intake">
+      <div class="domain-card-header">
+        <div>
+          <div class="domain-label intake">Intake Protocol</div>
+          <div class="domain-name" id="intakeName">—</div>
+        </div>
+        <button class="check-btn" id="check-intake" onclick="toggleDomain('intake')">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+            <path d="M1.5 7L6.5 12L16.5 2" stroke="#0A0A08" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="domain-detail">
+        <div class="domain-detail-text" id="intakeDetail"></div>
+        <div id="intakeTag"></div>
+      </div>
+    </div>
+
+    <!-- SYNTHESIS -->
+    <div class="domain-card fade-in" id="card-synthesis">
+      <div class="domain-card-header">
+        <div>
+          <div class="domain-label synthesis">Synthesis Mode</div>
+          <div class="domain-name" id="synthesisName">—</div>
+        </div>
+        <button class="check-btn" id="check-synthesis" onclick="toggleDomain('synthesis')">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+            <path d="M1.5 7L6.5 12L16.5 2" stroke="#0A0A08" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="domain-detail">
+        <div class="domain-detail-text" id="synthesisDetail"></div>
+      </div>
+    </div>
+
+    <!-- EXERCISE -->
+    <div class="domain-card fade-in" id="card-exercise">
+      <div class="domain-card-header">
+        <div>
+          <div class="domain-label exercise">Exercise</div>
+          <div class="domain-name" id="exerciseName">—</div>
+        </div>
+        <button class="check-btn" id="check-exercise" onclick="toggleDomain('exercise')">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+            <path d="M1.5 7L6.5 12L16.5 2" stroke="#0A0A08" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="domain-detail">
+        <div class="domain-detail-text" id="exerciseDetail"></div>
+        <div id="exerciseTag"></div>
+      </div>
+    </div>
+
+    <!-- OT TRIAD -->
+    <div class="domain-card fade-in" id="card-ot">
+      <div class="domain-card-header">
+        <div>
+          <div class="domain-label ot">OT Triad</div>
+          <div class="domain-name" id="otName">—</div>
+        </div>
+        <button class="check-btn" id="check-ot" onclick="toggleDomain('ot')">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+            <path d="M1.5 7L6.5 12L16.5 2" stroke="#0A0A08" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="domain-detail">
+        <div class="domain-detail-text" id="otDetail"></div>
+      </div>
+    </div>
+
+    <!-- REROLL -->
+    <button class="reroll-btn" onclick="showRerollConfirm()">⚠ OVERRIDE ROLL · NO RE-ROLLS RULE APPLIES</button>
+
+  </div><!-- end result-section -->
+
+  <!-- NON-NEGOTIABLES -->
+  <div class="nonneg-section" id="nonnegSection">
+    <button class="nonneg-toggle" onclick="toggleNonNeg()">
+      <div>
+        <div class="nonneg-toggle-label">Daily · All Rolls</div>
+        <div class="nonneg-toggle-title">Non-Negotiables</div>
+      </div>
+      <svg class="nonneg-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M5 8L10 13L15 8" stroke="#6B6B67" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div class="nonneg-list" id="nonnegList">
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🥩</div>
+        <div class="nonneg-text"><strong>30g protein per meal min.</strong> At 83.9kg → 130–150g/day. Eggs×2=12g, chicken 150g=45g, tempe 100g=19g.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🥦</div>
+        <div class="nonneg-text"><strong>Fiber first, carbs last.</strong> Eat sayur/salad before touching rice. Every meal. Reduces glucose spike up to 73%.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🍎</div>
+        <div class="nonneg-text"><strong>Vinegar hack.</strong> 1 tbsp ACV in water before high-carb meals. Flattens spike ~30%.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🫙</div>
+        <div class="nonneg-text"><strong>1× fermented food daily.</strong> Kimchi, unsweetened yogurt, tempe, or kombucha. Addresses gut flag.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🍚</div>
+        <div class="nonneg-text"><strong>Rice portion −30–40%.</strong> Replace volume with protein or vegetables. Biggest glycemic load at current BMI.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">🌙</div>
+        <div class="nonneg-text"><strong>Stop eating 3 hours before sleep.</strong> Supports eGFR 88.3 (mild kidney decrease). Overnight fasting window.</div>
+      </div>
+      <div class="nonneg-item">
+        <div class="nonneg-icon">☕</div>
+        <div class="nonneg-text"><strong>Default coffee: black or splash of milk.</strong> Sweetened max 1–2×/week, never on No Sugar roll days.</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end content -->
+
+<!-- REROLL CONFIRM OVERLAY -->
+<div class="overlay" id="rerollOverlay">
+  <div class="overlay-sheet">
+    <div class="overlay-title">Override Roll?</div>
+    <div class="overlay-text">The CONCURSUS rule is clear: <span>roll once daily. No re-rolls.</span> The point isn't optimization — it's obedience to the randomized constraint.<br><br>Override only if there was a genuine input error.</div>
+    <div class="overlay-actions">
+      <button class="btn-cancel" onclick="closeRerollConfirm()">STAY. OBEY.</button>
+      <button class="btn-confirm" onclick="doReroll()">OVERRIDE</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const TABLE = {
+  1:  { intake: 'sugar', synthesis: 'bible',  exercise: 'hz2',      ot: 'covenant' },
+  2:  { intake: 'fried', synthesis: 'libro',  exercise: 'certamen', ot: 'kingdom' },
+  3:  { intake: 'if',    synthesis: 'acquire',exercise: 'hz2',      ot: 'endurance' },
+  4:  { intake: 'sugar', synthesis: 'libro',  exercise: 'certamen', ot: 'prophetic' },
+  5:  { intake: 'fried', synthesis: 'bible',  exercise: 'hz2',      ot: 'promised' },
+  6:  { intake: 'if',    synthesis: 'acquire',exercise: 'certamen', ot: 'wisdom' },
+  7:  { intake: 'sugar', synthesis: 'acquire',exercise: 'hz2',      ot: 'kingdom' },
+  8:  { intake: 'fried', synthesis: 'bible',  exercise: 'certamen', ot: 'covenant' },
+  9:  { intake: 'if',    synthesis: 'libro',  exercise: 'hz2',      ot: 'prophetic' },
+  10: { intake: 'sugar', synthesis: 'bible',  exercise: 'certamen', ot: 'endurance' },
+  11: { intake: 'fried', synthesis: 'libro',  exercise: 'hz2',      ot: 'wisdom' },
+  12: { intake: 'if',    synthesis: 'acquire',exercise: 'certamen', ot: 'covenant' },
+  13: { intake: 'sugar', synthesis: 'libro',  exercise: 'hz2',      ot: 'promised' },
+  14: { intake: 'fried', synthesis: 'acquire',exercise: 'certamen', ot: 'kingdom' },
+  15: { intake: 'if',    synthesis: 'bible',  exercise: 'hz2',      ot: 'endurance' },
+  16: { intake: 'sugar', synthesis: 'acquire',exercise: 'certamen', ot: 'wisdom' },
+  17: { intake: 'fried', synthesis: 'bible',  exercise: 'hz2',      ot: 'prophetic' },
+  18: { intake: 'if',    synthesis: 'libro',  exercise: 'certamen', ot: 'promised' },
+  19: { intake: 'sugar', synthesis: 'bible',  exercise: 'certamen', ot: 'wisdom' },
+  20: { intake: 'fried', synthesis: 'libro',  exercise: 'hz2',      ot: 'covenant' },
+};
+
+const INTAKE = {
+  sugar: {
+    name: 'No Sugar + Savory BF',
+    detail: '<strong>Zero added sugar all day</strong> (incl. sweetened coffee). Savory breakfast only — eggs, protein, vegetables. No toast+jam, no sweetened oatmeal, no fruit-first.',
+    why: 'HbA1c 5.7% — flatten morning glucose curve to reset the entire day\'s insulin response.',
+    tag: 'sugar',
+    tagLabel: 'GLYCEMIC CONTROL',
+  },
+  fried: {
+    name: 'No Fried + Clean Fat',
+    detail: '<strong>Zero deep-fried food all day.</strong> Actively choose clean fats: olive oil, avocado, nuts, fatty fish. Avoid industrial seed oils (soybean, canola, palm olein) even in non-fried cooking.',
+    why: 'Hypercholesterolemia on Rosuvastatin 20mg — reduce inflammatory fat load, support statin efficacy.',
+    tag: 'fried',
+    tagLabel: 'LIPID PROTOCOL',
+  },
+  if: {
+    name: 'IF + Protein Front-Load',
+    detail: '<strong>Intermittent fasting (16:8 minimum).</strong> Break fast with 30g+ protein + fiber first (eggs + greens, chicken + sayur), then add carbs last. No breaking fast with nasi goreng or naked carbs.',
+    why: 'MPS threshold (Lyon) + glucose sequencing (Inchauspé) — maximize muscle protein synthesis, prevent post-fast insulin spike.',
+    tag: 'if',
+    tagLabel: 'FASTING PROTOCOL',
+  },
+};
+
+const SYNTHESIS = {
+  bible: {
+    name: 'Bible Project',
+    detail: 'Structured Scripture engagement via The Bible Project framework. Follow the current NT Reading Plan sequence — triad-based, 87-week canonical. This is not devotional — it is formational intake.',
+  },
+  libro: {
+    name: 'Libro',
+    detail: 'Audiobook mode. Continue current Libro title. Full focus — not background listening. Capture any Compendium-eligible insight to Cogitatio immediately after.',
+  },
+  acquire: {
+    name: 'Acquire',
+    detail: 'Skill/domain acquisition. Structured learning: courses, technical material, or depth reading in a designated Compendium target area. Must be project-convergent (linked to active synthesis destination).',
+  },
+};
+
+const EXERCISE = {
+  hz2: {
+    name: 'Heart Zone 2',
+    detail: '<strong>Zone 2 cardio — sustained 30–60 min.</strong> Target: 60–70% max HR. 10mi cycle/hr target. Track via Luna ring HRV response next day. No intensity spikes — the point is mitochondrial density, not calorie burn.',
+    tag: 'hz2',
+    tagLabel: 'HZ2 · AEROBIC',
+  },
+  certamen: {
+    name: 'CERTAMEN',
+    detail: '<strong>3-Day Strength Rotation (A/B/C).</strong> KB + DB + TRX. Follow the next session in sequence — check your BuJo for which day is up. MECE movement pattern coverage. Randomness-as-obedience: if you rolled Strength, you do the next CERTAMEN day — no cherry-picking.',
+    tag: 'certamen',
+    tagLabel: 'CERTAMEN · STRENGTH',
+  },
+};
+
+const OT_TRIAD = {
+  covenant: {
+    name: 'Covenant Foundation',
+    cssClass: 'triad-covenant',
+    detail: 'Genesis · Exodus · Leviticus. The foundational covenant architecture — creation, fall, election, law. Reading the grain of the universe before it was broken.',
+  },
+  kingdom: {
+    name: 'Kingdom Rises & Falls',
+    cssClass: 'triad-kingdom',
+    detail: 'Joshua · Judges · Samuel/Kings. The experiment of human kingship — its glory, its corruption, its inevitable failure. Typological density at every turn.',
+  },
+  endurance: {
+    name: 'Endurance Under Empire',
+    cssClass: 'triad-endurance',
+    detail: 'Daniel · Esther · Ezra-Nehemiah. Faithfulness inside hostile systems. The theology of faithful presence — not triumph, not withdrawal.',
+  },
+  prophetic: {
+    name: 'Prophetic Confrontation',
+    cssClass: 'triad-prophetic',
+    detail: 'Isaiah · Jeremiah · Ezekiel. The three great confronters. Prophetic witness as both diagnostic and promissory — they see what is, and announce what will be.',
+  },
+  promised: {
+    name: 'Promised One',
+    cssClass: 'triad-promised',
+    detail: 'Psalms · Song of Songs · Wisdom lit. The affective register of Scripture — lament, desire, embodied wisdom. The canon\'s heart, not its margin.',
+  },
+  wisdom: {
+    name: 'Wisdom Deposit',
+    cssClass: 'triad-wisdom',
+    detail: 'Proverbs · Ecclesiastes · Job. The epistemological triad. Proverbs knows, Ecclesiastes questions, Job breaks. Read in that order — the sequence is the argument.',
+  },
+};
+
+// ── STATE ──
+const TODAY = new Date().toDateString();
+let state = {};
+
+function loadState() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('concursus_state') || '{}');
+    if (saved.date === TODAY) {
+      state = saved;
+    } else {
+      state = { date: TODAY, roll: null, done: { intake: false, synthesis: false, exercise: false, ot: false } };
+    }
+  } catch(e) {
+    state = { date: TODAY, roll: null, done: { intake: false, synthesis: false, exercise: false, ot: false } };
+  }
+}
+
+function saveState() {
+  try { localStorage.setItem('concursus_state', JSON.stringify(state)); } catch(e) {}
+}
+
+// ── INIT ──
+function init() {
+  loadState();
+
+  // Date display
+  const opts = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+  document.getElementById('dateBadge').textContent = new Date().toLocaleDateString('en-GB', opts).toUpperCase();
+
+  if (state.roll) {
+    renderRoll(state.roll, false);
+    renderCompletions();
+  }
+}
+
+// ── ROLL ──
+function digitalRoll() {
+  const roll = Math.floor(Math.random() * 20) + 1;
+  const die = document.getElementById('dieContainer');
+  die.classList.add('rolling');
+  setTimeout(() => {
+    die.classList.remove('rolling');
+    if (!state.roll) {
+      setRoll(roll);
+    } else {
+      // already rolled today — show confirm
+      _pendingRoll = roll;
+      showRerollConfirm();
+    }
+  }, 650);
+}
+
+let _pendingRoll = null;
+
+function confirmManualRoll() {
+  const input = document.getElementById('manualInput');
+  const val = parseInt(input.value);
+  if (isNaN(val) || val < 1 || val > 20) {
+    input.style.borderColor = 'var(--rust)';
+    setTimeout(() => { input.style.borderColor = 'var(--border)'; }, 1000);
+    return;
+  }
+  if (state.roll && state.roll !== val) {
+    _pendingRoll = val;
+    showRerollConfirm();
+  } else {
+    setRoll(val);
+    input.value = '';
+  }
+}
+
+function setRoll(roll) {
+  state.roll = roll;
+  state.done = { intake: false, synthesis: false, exercise: false, ot: false };
+  saveState();
+  renderRoll(roll, true);
+}
+
+function renderRoll(roll, animate) {
+  // Update die
+  const num = document.getElementById('dieNumber');
+  num.textContent = roll;
+  num.classList.remove('hidden');
+
+  document.getElementById('rollInstruction').textContent = 'TODAY\'S ROLL · TAP DIE TO ROLL AGAIN';
+  document.getElementById('rollDisplay').textContent = roll;
+
+  const entry = TABLE[roll];
+  const intake = INTAKE[entry.intake];
+  const synthesis = SYNTHESIS[entry.synthesis];
+  const exercise = EXERCISE[entry.exercise];
+  const ot = OT_TRIAD[entry.ot];
+
+  // Intake
+  document.getElementById('intakeName').textContent = intake.name;
+  document.getElementById('intakeDetail').innerHTML = intake.detail + '<br><br><em style="font-size:10px;color:var(--muted)">' + intake.why + '</em>';
+  document.getElementById('intakeTag').innerHTML = `<span class="protocol-tag ${intake.tag}">${intake.tagLabel}</span>`;
+
+  // Synthesis
+  document.getElementById('synthesisName').textContent = synthesis.name;
+  document.getElementById('synthesisDetail').innerHTML = synthesis.detail;
+
+  // Exercise
+  document.getElementById('exerciseName').textContent = exercise.name;
+  document.getElementById('exerciseDetail').innerHTML = exercise.detail;
+  document.getElementById('exerciseTag').innerHTML = `<span class="protocol-tag ${exercise.tag}">${exercise.tagLabel}</span>`;
+
+  // OT Triad
+  const otNameEl = document.getElementById('otName');
+  otNameEl.textContent = ot.name;
+  otNameEl.className = 'domain-name ' + ot.cssClass;
+  document.getElementById('otDetail').innerHTML = ot.detail;
+
+  // Show result section
+  const section = document.getElementById('resultSection');
+  section.classList.add('visible');
+
+  // Animate cards
+  if (animate) {
+    const cards = section.querySelectorAll('.domain-card');
+    cards.forEach((c, i) => {
+      c.style.opacity = '0';
+      c.style.transform = 'translateY(10px)';
+      setTimeout(() => {
+        c.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        c.style.opacity = '1';
+        c.style.transform = 'translateY(0)';
+      }, 60 + i * 70);
+    });
+  }
+}
+
+function renderCompletions() {
+  const domains = ['intake', 'synthesis', 'exercise', 'ot'];
+  domains.forEach((d, i) => {
+    const btn = document.getElementById('check-' + d);
+    const card = document.getElementById('card-' + d);
+    const pip = document.getElementById('pip' + i);
+    if (state.done[d]) {
+      btn.classList.add('checked');
+      card.classList.add('done');
+      if (pip) pip.classList.add('done');
+    } else {
+      btn.classList.remove('checked');
+      card.classList.remove('done');
+      if (pip) pip.classList.remove('done');
+    }
+  });
+  checkCarpePoint();
+}
+
+function toggleDomain(domain) {
+  if (!state.roll) return;
+  state.done[domain] = !state.done[domain];
+  saveState();
+  renderCompletions();
+}
+
+function checkCarpePoint() {
+  const allDone = Object.values(state.done).every(Boolean);
+  const badge = document.getElementById('carpeBadge');
+  if (allDone) {
+    badge.classList.add('earned');
+  } else {
+    badge.classList.remove('earned');
+  }
+}
+
+// ── NON-NEGOTIABLES ──
+function toggleNonNeg() {
+  document.getElementById('nonnegSection').classList.toggle('open');
+}
+
+// ── REROLL CONFIRM ──
+function showRerollConfirm() {
+  document.getElementById('rerollOverlay').classList.add('visible');
+}
+function closeRerollConfirm() {
+  document.getElementById('rerollOverlay').classList.remove('visible');
+  _pendingRoll = null;
+}
+function doReroll() {
+  document.getElementById('rerollOverlay').classList.remove('visible');
+  if (_pendingRoll !== null) {
+    setRoll(_pendingRoll);
+    document.getElementById('manualInput').value = '';
+    _pendingRoll = null;
+  } else {
+    state.roll = null;
+    saveState();
+    document.getElementById('dieNumber').classList.add('hidden');
+    document.getElementById('resultSection').classList.remove('visible');
+    document.getElementById('rollInstruction').textContent = 'TAP DIE TO ROLL DIGITALLY · OR ENTER YOUR PHYSICAL ROLL';
+  }
+}
+
+init();
+</script>
+</body>
+</html>
