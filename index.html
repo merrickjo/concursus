@@ -899,6 +899,7 @@ function setRoll(roll) {
   state.done = { intake: false, synthesis: false, exercise: false, ot: false };
   saveState();
   renderRoll(roll, true);
+    fetch('https://narrowbot.app.n8n.cloud/webhook/concursus', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({roll:roll})}).catch(()=>{});
 }
 
 function renderRoll(roll, animate) {
