@@ -319,6 +319,8 @@
   }
   .protocol-tag.hz2 { background: rgba(61,139,122,0.15); color: var(--teal); border: 1px solid rgba(61,139,122,0.3); }
   .protocol-tag.certamen { background: rgba(181,66,42,0.15); color: var(--rust); border: 1px solid rgba(181,66,42,0.3); }
+  .protocol-tag.step { background: rgba(61,139,122,0.12); color: var(--teal); border: 1px solid rgba(61,139,122,0.25); }
+  .protocol-tag.close { background: rgba(181,66,42,0.12); color: var(--rust); border: 1px solid rgba(181,66,42,0.25); }
   .protocol-tag.sugar { background: rgba(61,139,122,0.12); color: var(--teal); border: 1px solid rgba(61,139,122,0.25); }
   .protocol-tag.fried { background: rgba(107,78,138,0.15); color: var(--purple); border: 1px solid rgba(107,78,138,0.3); }
   .protocol-tag.if { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.25); }
@@ -714,26 +716,26 @@
 <script>
 // ── DATA ──
 const TABLE = {
-  1:  { intake: 'sugar', synthesis: 'bible',  exercise: 'hz2',      ot: 'covenant' },
-  2:  { intake: 'fried', synthesis: 'libro',  exercise: 'certamen', ot: 'kingdom' },
-  3:  { intake: 'if',    synthesis: 'acquire',exercise: 'hz2',      ot: 'endurance' },
-  4:  { intake: 'sugar', synthesis: 'libro',  exercise: 'certamen', ot: 'prophetic' },
-  5:  { intake: 'fried', synthesis: 'bible',  exercise: 'hz2',      ot: 'promised' },
-  6:  { intake: 'if',    synthesis: 'acquire',exercise: 'certamen', ot: 'wisdom' },
-  7:  { intake: 'sugar', synthesis: 'acquire',exercise: 'hz2',      ot: 'kingdom' },
-  8:  { intake: 'fried', synthesis: 'bible',  exercise: 'certamen', ot: 'covenant' },
-  9:  { intake: 'if',    synthesis: 'libro',  exercise: 'hz2',      ot: 'prophetic' },
-  10: { intake: 'sugar', synthesis: 'bible',  exercise: 'certamen', ot: 'endurance' },
-  11: { intake: 'fried', synthesis: 'libro',  exercise: 'hz2',      ot: 'wisdom' },
-  12: { intake: 'if',    synthesis: 'acquire',exercise: 'certamen', ot: 'covenant' },
-  13: { intake: 'sugar', synthesis: 'libro',  exercise: 'hz2',      ot: 'promised' },
-  14: { intake: 'fried', synthesis: 'acquire',exercise: 'certamen', ot: 'kingdom' },
-  15: { intake: 'if',    synthesis: 'bible',  exercise: 'hz2',      ot: 'endurance' },
-  16: { intake: 'sugar', synthesis: 'acquire',exercise: 'certamen', ot: 'wisdom' },
-  17: { intake: 'fried', synthesis: 'bible',  exercise: 'hz2',      ot: 'prophetic' },
-  18: { intake: 'if',    synthesis: 'libro',  exercise: 'certamen', ot: 'promised' },
-  19: { intake: 'sugar', synthesis: 'bible',  exercise: 'certamen', ot: 'wisdom' },
-  20: { intake: 'fried', synthesis: 'libro',  exercise: 'hz2',      ot: 'covenant' },
+  1:  { intake: 'sugar', synthesis: 'bible',   exercise: 'hz2',      ot: 'covenant' },
+  2:  { intake: 'fried', synthesis: 'libro',   exercise: 'certamen', ot: 'kingdom' },
+  3:  { intake: 'if',    synthesis: 'acquire', exercise: 'hz2',      ot: 'endurance' },
+  4:  { intake: 'sugar', synthesis: 'libro',   exercise: 'certamen', ot: 'prophetic' },
+  5:  { intake: 'fried', synthesis: 'bible',   exercise: 'step',     ot: 'promised' },
+  6:  { intake: 'if',    synthesis: 'acquire', exercise: 'step',     ot: 'wisdom' },
+  7:  { intake: 'close', synthesis: 'acquire', exercise: 'hz2',      ot: 'kingdom' },
+  8:  { intake: 'fried', synthesis: 'bible',   exercise: 'certamen', ot: 'covenant' },
+  9:  { intake: 'if',    synthesis: 'libro',   exercise: 'hz2',      ot: 'prophetic' },
+  10: { intake: 'sugar', synthesis: 'bible',   exercise: 'step',     ot: 'endurance' },
+  11: { intake: 'close', synthesis: 'libro',   exercise: 'hz2',      ot: 'wisdom' },
+  12: { intake: 'close', synthesis: 'acquire', exercise: 'certamen', ot: 'covenant' },
+  13: { intake: 'sugar', synthesis: 'libro',   exercise: 'step',     ot: 'promised' },
+  14: { intake: 'fried', synthesis: 'acquire', exercise: 'step',     ot: 'kingdom' },
+  15: { intake: 'if',    synthesis: 'bible',   exercise: 'hz2',      ot: 'endurance' },
+  16: { intake: 'sugar', synthesis: 'acquire', exercise: 'certamen', ot: 'wisdom' },
+  17: { intake: 'fried', synthesis: 'bible',   exercise: 'hz2',      ot: 'prophetic' },
+  18: { intake: 'if',    synthesis: 'libro',   exercise: 'certamen', ot: 'promised' },
+  19: { intake: 'close', synthesis: 'bible',   exercise: 'certamen', ot: 'wisdom' },
+  20: { intake: 'close', synthesis: 'libro',   exercise: 'step',     ot: 'covenant' },
 };
 
 const INTAKE = {
@@ -758,6 +760,13 @@ const INTAKE = {
     tag: 'if',
     tagLabel: 'FASTING PROTOCOL',
   },
+  close: {
+    name: 'Early Close',
+    detail: '<strong>Last bite by 19:30 — kitchen closed.</strong> Screens down 22:30, lights out 23:00. Badminton evening: post-badminton protein meal before 19:30, or protein-only snack.',
+    why: 'Tracker Sep 2026: 0 of 36 nights ≥7h, onset ~midnight. Early time-restricted eating improves insulin sensitivity (Sutton 2018); supports eGFR 88.3 overnight fast.',
+    tag: 'close',
+    tagLabel: 'CIRCADIAN PROTOCOL',
+  },
 };
 
 const SYNTHESIS = {
@@ -778,7 +787,7 @@ const SYNTHESIS = {
 const EXERCISE = {
   hz2: {
     name: 'Heart Zone 2',
-    detail: '<strong>Zone 2 cardio — sustained 30–60 min.</strong> Target: 60–70% max HR. 10mi cycle/hr target. Track via Luna ring HRV response next day. No intensity spikes — the point is mitochondrial density, not calorie burn.',
+    detail: '<strong>Zone 2 cardio — 40 min, HR held at 110–129 bpm</strong> (60–70% of tested max 184). Badminton never counts as HZ2. 10mi cycle/hr target. Track via Luna ring HRV response next day. No intensity spikes — the point is mitochondrial density, not calorie burn.',
     tag: 'hz2',
     tagLabel: 'HZ2 · AEROBIC',
   },
@@ -787,6 +796,12 @@ const EXERCISE = {
     detail: '<strong>3-Day Strength Rotation (A/B/C).</strong> KB + DB + TRX. Follow the next session in sequence — check your BuJo for which day is up. MECE movement pattern coverage. Randomness-as-obedience: if you rolled Strength, you do the next CERTAMEN day — no cherry-picking.',
     tag: 'certamen',
     tagLabel: 'CERTAMEN · STRENGTH',
+  },
+  step: {
+    name: 'STEP 10K',
+    detail: '<strong>10,000 steps</strong>, including a 10–15 min walk after each of the two biggest meals. Floor on a badminton/bad day: 7,000 + one post-meal walk. Median was 3.6k/day (Google Health 2025–26) — this is the gap, not intensity.',
+    tag: 'step',
+    tagLabel: 'NEAT · GLUCOSE',
   },
 };
 
